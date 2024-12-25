@@ -124,3 +124,12 @@ class YTDownloaderGUI(QMainWindow):
     def download_error(self, error_message):
         self.download_btn.setEnabled(True)
         QMessageBox.critical(self, "Error", f"Download failed: {error_message}")
+
+def main():
+    app = QApplication(sys.argv)
+    window = YTDownloaderGUI()
+    window.show()
+    sys.exit(app.exec())
+
+if __name__ == '__main__':
+    main()
