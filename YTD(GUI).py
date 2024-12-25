@@ -88,3 +88,39 @@ class YTDownloaderGUI(QMainWindow):
         self.download_btn = QPushButton("Download")
         self.download_btn.clicked.connect(self.start_download)
         layout.addWidget(self.download_btn)
+
+    def select_directory(self):
+        directory = QFileDialog.getExistingDirectory(self, "Select Download Directory")
+        if directory:
+            self.dir_input.setText(directory)
+            
+    def start_download(self):
+        url = self.url_input.text().strip()
+        directory = self.dir_input.text().strip()
+        
+        if not url:
+            QMessageBox.warning(self, "Error", "Please enter a YouTube URL")
+            return
+            
+        if not directory:
+            QMessageBox.warning(self, "Error", "Please select a download directory")
+            return
+            
+        self.download_btn.setEnabled(False)
+        self.worker = DownloadWorker(url, self.format_combo.currentText(), directory)
+        self.worker.progress.connect(self.update_progress)
+        self.worker.finished.connect(self.download_finished)
+        self.worker.error.connect(self.download_error)
+        self.worker.start()
+        
+    def update_progress(self, percentage):
+        self.progress_bar.setValue(int(percentage))
+        
+    def download_finished(self):
+        self.progress_bar.setValue(100)
+        self.download_btn.setEnabled(True)
+        QMessageBox.information(self, "Success", "Download completed successfully!")
+        
+    def download_error(self, error_message):
+        self.download_btn.setEnabled(True)
+        QMessageBox.critical(self, "Error", f"Download failed: {error_message}")
