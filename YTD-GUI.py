@@ -29,11 +29,12 @@ class DownloadWorker(QThread):
                 
     def run(self):
         try:
-            format_selection = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]' if self.format_choice == 'Video (MP4)' else 'bestaudio[ext=m4a]'
+            format_selection = 'bestvideo[height<=1080]+bestaudio[ext=m4a]/best[ext=mp4]' if self.format_choice == 'Video (MP4)' else 'bestaudio[ext=m4a]'
             
             ydl_opts = {
                 'format': format_selection,
                 'progress_hooks': [self.progress_hook],
+                'noplaylist': True,
                 'outtmpl': f'{self.directory}/%(title)s.%(ext)s'
             }
             
