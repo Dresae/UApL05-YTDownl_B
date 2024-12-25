@@ -43,3 +43,48 @@ class DownloadWorker(QThread):
             self.finished.emit()
         except Exception as e:
             self.error.emit(str(e))
+
+class YTDownloaderGUI(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("YouTube Downloader")
+        self.setMinimumWidth(500)
+        
+        # Create main widget and layout
+        main_widget = QWidget()
+        self.setCentralWidget(main_widget)
+        layout = QVBoxLayout(main_widget)
+        
+        # URL input
+        url_layout = QHBoxLayout()
+        self.url_input = QLineEdit()
+        self.url_input.setPlaceholderText("Enter YouTube URL")
+        url_layout.addWidget(self.url_input)
+        layout.addLayout(url_layout)
+        
+        # Directory selection
+        dir_layout = QHBoxLayout()
+        self.dir_input = QLineEdit()
+        self.dir_input.setPlaceholderText("Download Directory")
+        self.dir_button = QPushButton("Browse")
+        self.dir_button.clicked.connect(self.select_directory)
+        dir_layout.addWidget(self.dir_input)
+        dir_layout.addWidget(self.dir_button)
+        layout.addLayout(dir_layout)
+        
+        # Format selection
+        format_layout = QHBoxLayout()
+        self.format_combo = QComboBox()
+        self.format_combo.addItems(["Video (MP4)", "Audio (M4A)"])
+        format_layout.addWidget(QLabel("Format:"))
+        format_layout.addWidget(self.format_combo)
+        layout.addLayout(format_layout)
+        
+        # Progress bar
+        self.progress_bar = QProgressBar()
+        layout.addWidget(self.progress_bar)
+        
+        # Download button
+        self.download_btn = QPushButton("Download")
+        self.download_btn.clicked.connect(self.start_download)
+        layout.addWidget(self.download_btn)
